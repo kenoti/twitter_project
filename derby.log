@@ -1,0 +1,6 @@
+----------------------------------------------------------------
+2017-02-13 17:16:52.619 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.4.2.0 - (689064): instance a816c00e-015a-387a-1df9-0000014f7b30
+on database directory /home/training/exercises/projects/twitter-project/metastore_db  
+
+Database Class Loader started - derby.database.classpath=''
