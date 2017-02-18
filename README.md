@@ -10,7 +10,10 @@ How to run this from scratch on EC2:
 8. Fill in Twitter credentials twitter4j.properties if running on local or put them into the loadTwitterKeys() before compiling
 9. in the main twitter-project folder run mvn package to compile the project
 10. Run the compiled jar which should be in the target directory 
-11. Run script using spark-submit --class dsti.Streamer --master local[8] twitter-project-1.0-SNAPSHOT-jar-with-dependencies.jar to test if you have a properties file put it in the same location as the jar file. This will not work when you use master yarn but will work with master local
+11. Run script using 
+spark-submit --jars spark-streaming-twitter_2.10-1.6.0.jar,twitter4j-core-4.0.4.jar,twitter4j-stream-4.0.4.jar --class "dsti.Streamer" --master local[8] twitter-project-1.0-SNAPSHOT.jar > tweets_output.txt 2>> tweets_error.txt
+
+to test if you have a properties file put it in the same location as the jar file. This will not work when you use master yarn but will work with master local
 12. Run script using spark-submit --class dsti.Streamer --master yarn  twitter-project-1.0-SNAPSHOT-jar-with-dependencies.jar
 The application runs for about 3-10 minutes depending on timeout session set collecting tweets
 
@@ -19,6 +22,22 @@ twitter-project-1.0-SNAPSHOT-jar-with-dependencies.jar  has no dependicies loade
 Sample output is below from the cluster. At the using  spark-submit --class dsti.Streamer --master yarn  twitter-project-1.0-SNAPSHOT-jar-with-dependencies.jar
 You have a count of tweets collected some text shown and some analysis of some popular hashtags related to football.
 Tried to use only english tweets as other languages were tricky to analyse.
+
+14. To read the Jason files to HDFS
+hdfs dfs -cat /user/kennedy/tweets/twe*.json/*
+
+15. To read if data is stored in hive go go to hive
+hive
+show tables;
+select * from tweets_hive
+data is stored
+
+16. To test the hive system run spark-submit
+import org.apache.spark.sql.hive._
+val hiveContext = new HiveContext(sc)
+hiveContext.sql("SELECT * from tweets_hive").collect().foreach(rdd => println(rdd))
+System.out.println("INFO: ****************** Connected in HIVE ******************")
+System.out.println("INFO: ****************** End Test Scala ******************")
 
 New tweets 53:
 
@@ -178,6 +197,3 @@ Popular topics in last 3600000 ms seconds (19 total):
 #formulaone (1 tweets)
 #freebets (1 tweets)
 #London (1 tweets)
-17/02/15 16:32:06 WARN RetryInvocationHandler: Exception while invoking ClientNamenodeProtocolTranslatorPB.mkdirs over null. Not retrying because try once and fail.
-java.net.ConnectException: Call From ec2-52-211-98-209.eu-west-1.compute.amazonaws.com/10.0.0.85 to localhost:8020 failed on connection exception: java.net.ConnectException: Connection refused; For more 
-# twitter_project
